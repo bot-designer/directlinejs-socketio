@@ -1,0 +1,33 @@
+{
+  "name": "botframework-directlinejs-socket.io",
+  "version": "0.10.0",
+  "description": "client library for the Microsoft Bot Framework Direct Line 3.0 protocol",
+  "main": "built/directLine.js",
+  "types": "built/directLine.d.ts",
+  "scripts": {
+    "build": "tsc && webpack",
+    "watch": "npx npm-run-all -p -r -l tsc-watch webpack-watch",
+    "tsc-watch": "tsc -w",
+    "webpack-watch": "webpack -w",
+    "clean": "rm -rf built",
+    "prepublish": "tsc && webpack --config webpack.production.config.js",
+    "test": "echo TODO: Add tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bot-designer/directlinejs-socketio.git"
+  },
+  "author": "Microsoft Corp",
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^5.0.3",
+    "socket.io-client": "^2.0.4"
+  },
+  "devDependencies": {
+    "@types/socket.io-client": "^1.4.32",
+    "source-map-loader": "^0.1.5",
+    "ts-loader": "^1.3.3",
+    "typescript": "^2.3.2",
+    "webpack": "^1.14.0"
+  }
+}

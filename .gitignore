@@ -1,0 +1,6 @@
+node_modules
+.vscode
+/directLine.js
+/directLine.js.map
+.history
+npm-debug.log
