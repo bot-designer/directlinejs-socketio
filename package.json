@@ -1,5 +1,5 @@
 {
-  "name": "botframework-directlinejs-socket.io",
+  "name": "@bot-designer/directlinejs-socket.io",
   "version": "0.10.0",
   "description": "client library for the Microsoft Bot Framework Direct Line 3.0 protocol",
   "main": "built/directLine.js",
