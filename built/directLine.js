@@ -1,5 +1,13 @@
 "use strict";
 // In order to keep file size down, only import the parts of rxjs that we use
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -68,6 +76,9 @@ var DirectLine = /** @class */ (function () {
         this.webSocket = (options.webSocket === undefined ? true : options.webSocket) && typeof WebSocket !== 'undefined' && WebSocket !== undefined;
         if (options.domain) {
             this.domain = options.domain;
+        }
+        if (options.params) {
+            this.params = options.params;
         }
         if (options.conversationId) {
             this.conversationId = options.conversationId;
@@ -149,7 +160,7 @@ var DirectLine = /** @class */ (function () {
             ? this.domain + "/conversations/" + this.conversationId + "?watermark=" + this.watermark
             : this.domain + "/conversations";
         var method = this.conversationId ? "GET" : "POST";
-        return Observable_1.Observable.ajax({
+        var request$ = {
             method: method,
             url: url,
             timeout: timeout,
@@ -157,8 +168,11 @@ var DirectLine = /** @class */ (function () {
                 "Accept": "application/json",
                 "Authorization": "Bearer " + this.token
             }
-        })
-            //      .do(ajaxResponse => konsole.log("conversation ajaxResponse", ajaxResponse.response))
+        };
+        if (method == 'POST' && this.params) {
+            request$['body'] = __assign({}, this.params);
+        }
+        return Observable_1.Observable.ajax(request$)
             .map(function (ajaxResponse) { return ajaxResponse.response; })
             .retryWhen(function (error$) {
             // for now we deem 4xx and 5xx errors as unrecoverable
