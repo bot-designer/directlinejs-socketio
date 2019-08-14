@@ -243,7 +243,6 @@ export interface DirectLineOptions {
     webSocket?: boolean;
     pollingInterval?: number;
     streamUrl?: string;
-    botId?: string;
     params?: any;
 }
 export interface IBotConnection {
@@ -266,7 +265,6 @@ export declare class DirectLine implements IBotConnection {
     private watermark;
     private streamUrl;
     referenceGrammarId: string;
-    private botId;
     private pollingInterval;
     private tokenRefreshSubscription;
     constructor(options: DirectLineOptions);

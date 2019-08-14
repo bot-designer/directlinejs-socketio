@@ -267,7 +267,6 @@ export interface DirectLineOptions {
     webSocket?: boolean,
     pollingInterval?: number,
     streamUrl?: string,
-    botId?: string;
     params?: any;
 }
 
@@ -310,8 +309,6 @@ export class DirectLine implements IBotConnection {
     private watermark = '';
     private streamUrl: string;
     public referenceGrammarId: string;
-    private botId: string;
-
     private pollingInterval: number = 1000;
 
     private tokenRefreshSubscription: Subscription;
@@ -335,10 +332,6 @@ export class DirectLine implements IBotConnection {
 
         if (options.watermark) {
             this.watermark = options.watermark;
-        }
-
-        if(options.botId){
-            this.botId = options.botId;
         }
 
         if (options.streamUrl) {
@@ -430,10 +423,8 @@ export class DirectLine implements IBotConnection {
             timeout,
             headers: {
                 "Accept": "application/json",
+                'Content-Type': 'application/json',
                 "Authorization": `Bearer ${this.token}`
-            },
-            body: {
-                botId: this.botId
             }
         };
 
