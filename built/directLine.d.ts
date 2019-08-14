@@ -243,7 +243,11 @@ export interface DirectLineOptions {
     webSocket?: boolean;
     pollingInterval?: number;
     streamUrl?: string;
+<<<<<<< HEAD
     botId?: string;
+=======
+    params?: any;
+>>>>>>> 5ac8a70b98d521ba6fff3afcc54879f78dc4b98d
 }
 export interface IBotConnection {
     connectionStatus$: BehaviorSubject<ConnectionStatus>;
@@ -256,6 +260,7 @@ export interface IBotConnection {
 export declare class DirectLine implements IBotConnection {
     connectionStatus$: BehaviorSubject<ConnectionStatus>;
     activity$: Observable<Activity>;
+    private params;
     private domain;
     private webSocket;
     private conversationId;

@@ -268,6 +268,7 @@ export interface DirectLineOptions {
     pollingInterval?: number,
     streamUrl?: string,
     botId?: string;
+    params?: any;
 }
 
 const lifetimeRefreshToken = 30 * 60 * 1000;
@@ -298,6 +299,7 @@ export interface IBotConnection {
 export class DirectLine implements IBotConnection {
     public connectionStatus$ = new BehaviorSubject(ConnectionStatus.Uninitialized);
     public activity$: Observable<Activity>;
+    private params: any;
 
     private domain = "https://directline.botframework.com/v3/directline";
     private webSocket: boolean;
@@ -321,6 +323,10 @@ export class DirectLine implements IBotConnection {
 
         if (options.domain) {
             this.domain = options.domain;
+        }
+
+        if (options.params) {
+            this.params = options.params;
         }
 
         if (options.conversationId) {
@@ -418,7 +424,7 @@ export class DirectLine implements IBotConnection {
             : `${this.domain}/conversations`;
         const method = this.conversationId ? "GET" : "POST";
 
-        return Observable.ajax({
+        const request$ = {
             method,
             url,
             timeout,
@@ -429,8 +435,15 @@ export class DirectLine implements IBotConnection {
             body: {
                 botId: this.botId
             }
-        })
-            //      .do(ajaxResponse => konsole.log("conversation ajaxResponse", ajaxResponse.response))
+        };
+
+        if (method == 'POST' && this.params) {
+            request$['body'] = {
+                ...this.params,
+            }
+        }
+
+        return Observable.ajax(request$)
             .map(ajaxResponse => ajaxResponse.response as Conversation)
             .retryWhen(error$ =>
                 // for now we deem 4xx and 5xx errors as unrecoverable
