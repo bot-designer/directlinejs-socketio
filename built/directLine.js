@@ -86,6 +86,9 @@ var DirectLine = /** @class */ (function () {
         if (options.watermark) {
             this.watermark = options.watermark;
         }
+        if (options.botId) {
+            this.botId = options.botId;
+        }
         if (options.streamUrl) {
             if (options.token && options.conversationId) {
                 this.streamUrl = options.streamUrl;
@@ -167,6 +170,9 @@ var DirectLine = /** @class */ (function () {
             headers: {
                 "Accept": "application/json",
                 "Authorization": "Bearer " + this.token
+            },
+            body: {
+                botId: this.botId
             }
         };
         if (method == 'POST' && this.params) {
