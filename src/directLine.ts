@@ -266,7 +266,8 @@ export interface DirectLineOptions {
     domain?: string,
     webSocket?: boolean,
     pollingInterval?: number,
-    streamUrl?: string
+    streamUrl?: string,
+    botId?: string;
 }
 
 const lifetimeRefreshToken = 30 * 60 * 1000;
@@ -307,6 +308,7 @@ export class DirectLine implements IBotConnection {
     private watermark = '';
     private streamUrl: string;
     public referenceGrammarId: string;
+    private botId: string;
 
     private pollingInterval: number = 1000;
 
@@ -327,6 +329,10 @@ export class DirectLine implements IBotConnection {
 
         if (options.watermark) {
             this.watermark = options.watermark;
+        }
+
+        if(options.botId){
+            this.botId = options.botId;
         }
 
         if (options.streamUrl) {
@@ -419,6 +425,9 @@ export class DirectLine implements IBotConnection {
             headers: {
                 "Accept": "application/json",
                 "Authorization": `Bearer ${this.token}`
+            },
+            body: {
+                botId: this.botId
             }
         })
             //      .do(ajaxResponse => konsole.log("conversation ajaxResponse", ajaxResponse.response))
