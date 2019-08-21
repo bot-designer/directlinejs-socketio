@@ -117,6 +117,7 @@ var DirectLine = /** @class */ (function () {
                 }
                 else {
                     return _this.startConversation().do(function (conversation) {
+                        localStorage.setItem("CONVERSATION_ID", btoa(conversation.conversationId));
                         _this.conversationId = conversation.conversationId;
                         _this.token = _this.secret || conversation.token;
                         _this.streamUrl = conversation.streamUrl;

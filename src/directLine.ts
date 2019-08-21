@@ -366,6 +366,7 @@ export class DirectLine implements IBotConnection {
                         return Observable.of(connectionStatus);
                     } else {
                         return this.startConversation().do(conversation => {
+                            localStorage.setItem("CONVERSATION_ID", btoa(conversation.conversationId))
                             this.conversationId = conversation.conversationId;
                             this.token = this.secret || conversation.token;
                             this.streamUrl = conversation.streamUrl;
