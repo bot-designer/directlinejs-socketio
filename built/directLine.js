@@ -117,7 +117,7 @@ var DirectLine = /** @class */ (function () {
                 }
                 else {
                     return _this.startConversation().do(function (conversation) {
-                        localStorage.setItem("CONVERSATION_ID", btoa(conversation.conversationId));
+                        window.dispatchEvent(new MessageEvent('conversationInit', { data: conversation }));
                         _this.conversationId = conversation.conversationId;
                         _this.token = _this.secret || conversation.token;
                         _this.streamUrl = conversation.streamUrl;
@@ -127,8 +127,7 @@ var DirectLine = /** @class */ (function () {
                         _this.connectionStatus$.next(ConnectionStatus.Online);
                     }, function (error) {
                         _this.connectionStatus$.next(ConnectionStatus.FailedToConnect);
-                    })
-                        .map(function (_) { return connectionStatus; });
+                    }).map(function (_) { return connectionStatus; });
                 }
             }
             else {

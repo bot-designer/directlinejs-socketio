@@ -366,7 +366,7 @@ export class DirectLine implements IBotConnection {
                         return Observable.of(connectionStatus);
                     } else {
                         return this.startConversation().do(conversation => {
-                            localStorage.setItem("CONVERSATION_ID", btoa(conversation.conversationId))
+                            window.dispatchEvent(new MessageEvent('conversationInit', {data: conversation}));
                             this.conversationId = conversation.conversationId;
                             this.token = this.secret || conversation.token;
                             this.streamUrl = conversation.streamUrl;
@@ -377,8 +377,7 @@ export class DirectLine implements IBotConnection {
                             this.connectionStatus$.next(ConnectionStatus.Online);
                         }, error => {
                             this.connectionStatus$.next(ConnectionStatus.FailedToConnect);
-                        })
-                            .map(_ => connectionStatus);
+                        }).map(_ => connectionStatus);
                     }
                 }
                 else {
