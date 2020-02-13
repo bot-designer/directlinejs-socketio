@@ -570,7 +570,7 @@ export class DirectLine implements IBotConnection {
                 // To send this message to DirectLine we need to deconstruct it into a "template" activity
                 // and one blob for each attachment.
                 formData = new FormData();
-                formData.append('activity', new Blob([JSON.stringify(messageWithoutAttachments)], { type: 'application/vnd.microsoft.activity' }));
+                // formData.append('activity', new Blob([JSON.stringify(messageWithoutAttachments)], { type: 'application/vnd.microsoft.activity' }));
 
                 return Observable.from(attachments || [])
                     .flatMap((media: Media) =>
