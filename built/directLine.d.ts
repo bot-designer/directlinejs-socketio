@@ -244,6 +244,7 @@ export interface DirectLineOptions {
     pollingInterval?: number;
     streamUrl?: string;
     params?: any;
+    closeSocketConnection: Function;
 }
 export interface IBotConnection {
     connectionStatus$: BehaviorSubject<ConnectionStatus>;
@@ -257,6 +258,7 @@ export declare class DirectLine implements IBotConnection {
     connectionStatus$: BehaviorSubject<ConnectionStatus>;
     activity$: Observable<Activity>;
     private params;
+    private socketConnection;
     private domain;
     private webSocket;
     private conversationId;
@@ -284,5 +286,6 @@ export declare class DirectLine implements IBotConnection {
     private observableFromActivityGroup(activityGroup);
     private webSocketActivity$();
     private observableWebSocket<T>();
+    closeSocketConnection(): void;
     private reconnectToConversation();
 }

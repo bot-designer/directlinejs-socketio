@@ -415,19 +415,23 @@ var DirectLine = /** @class */ (function () {
         var _this = this;
         return Observable_1.Observable.create(function (subscriber) {
             konsole.log("creating WebSocket", _this.streamUrl);
-            var socket = io(_this.streamUrl);
-            socket.on('close', function (close) {
+            _this.socketConnection = io(_this.streamUrl);
+            _this.socketConnection.on('close', function (close) {
                 konsole.log("Socket close", close);
                 subscriber.error(close);
             });
-            // Event to received messages
-            socket.on('message', function (message) {
+            _this.socketConnection.on('message', function (message) {
                 message && subscriber.next(JSON.parse(message));
             });
-            socket.on('open', function (open) {
+            _this.socketConnection.on('open', function (open) {
                 konsole.log("Socket open", open);
             });
         });
+    };
+    DirectLine.prototype.closeSocketConnection = function () {
+        if (this.socketConnection) {
+            this.socketConnection.close();
+        }
     };
     DirectLine.prototype.reconnectToConversation = function () {
         var _this = this;

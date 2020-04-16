@@ -268,6 +268,7 @@ export interface DirectLineOptions {
     pollingInterval?: number,
     streamUrl?: string,
     params?: any;
+    closeSocketConnection: Function;
 }
 
 const lifetimeRefreshToken = 30 * 60 * 1000;
@@ -299,6 +300,7 @@ export class DirectLine implements IBotConnection {
     public connectionStatus$ = new BehaviorSubject(ConnectionStatus.Uninitialized);
     public activity$: Observable<Activity>;
     private params: any;
+    private socketConnection: SocketIOClient.Socket;
 
     private domain = "https://directline.botframework.com/v3/directline";
     private webSocket: boolean;
@@ -366,7 +368,7 @@ export class DirectLine implements IBotConnection {
                         return Observable.of(connectionStatus);
                     } else {
                         return this.startConversation().do(conversation => {
-                            window.dispatchEvent(new MessageEvent('conversationInit', {data: conversation}));
+                            window.dispatchEvent(new MessageEvent('conversationInit', { data: conversation }));
                             this.conversationId = conversation.conversationId;
                             this.token = this.secret || conversation.token;
                             this.streamUrl = conversation.streamUrl;
@@ -693,23 +695,27 @@ export class DirectLine implements IBotConnection {
     private observableWebSocket<T>() {
         return Observable.create((subscriber: Subscriber<T>) => {
             konsole.log("creating WebSocket", this.streamUrl);
-            const socket = io(this.streamUrl);
+            this.socketConnection = io(this.streamUrl);
 
-            socket.on('close', close => {
+            this.socketConnection.on('close', close => {
                 konsole.log("Socket close", close);
                 subscriber.error(close);
             });
 
-            // Event to received messages
-            socket.on('message', message => {
+            this.socketConnection.on('message', (message: any) => {
                 message && subscriber.next(JSON.parse(message));
             });
 
-            socket.on('open', open => {
+            this.socketConnection.on('open', open => {
                 konsole.log("Socket open", open);
             });
-
         }) as Observable<T>;
+    }
+
+    public closeSocketConnection() {
+        if (this.socketConnection) {
+            this.socketConnection.close();
+        }
     }
 
     private reconnectToConversation() {
