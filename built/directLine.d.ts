@@ -273,8 +273,6 @@ export declare class DirectLine implements IBotConnection {
     private checkConnection(once?);
     private expiredToken();
     private startConversation();
-    private refreshTokenLoop();
-    private refreshToken();
     reconnect(conversation: Conversation): void;
     end(): void;
     getSessionId(): Observable<string>;

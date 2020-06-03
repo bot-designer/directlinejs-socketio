@@ -373,9 +373,6 @@ export class DirectLine implements IBotConnection {
                             this.token = this.secret || conversation.token;
                             this.streamUrl = conversation.streamUrl;
                             this.referenceGrammarId = conversation.referenceGrammarId;
-                            if (!this.secret)
-                                this.refreshTokenLoop();
-
                             this.connectionStatus$.next(ConnectionStatus.Online);
                         }, error => {
                             this.connectionStatus$.next(ConnectionStatus.FailedToConnect);
@@ -447,46 +444,6 @@ export class DirectLine implements IBotConnection {
                 )
                     .delay(timeout)
                     .take(retries)
-            )
-    }
-
-    private refreshTokenLoop() {
-        this.tokenRefreshSubscription = Observable.interval(intervalRefreshToken)
-            .flatMap(_ => this.refreshToken())
-            .subscribe(token => {
-                konsole.log("refreshing token", token, "at", new Date());
-                this.token = token;
-            });
-    }
-
-    private refreshToken() {
-        return this.checkConnection(true)
-            .flatMap(_ =>
-                Observable.ajax({
-                    method: "POST",
-                    url: `${this.domain}/tokens/refresh`,
-                    timeout,
-                    headers: {
-                        "Authorization": `Bearer ${this.token}`
-                    }
-                })
-                    .map(ajaxResponse => ajaxResponse.response.token as string)
-                    .retryWhen(error$ => error$
-                        .mergeMap(error => {
-                            if (error.status === 403) {
-                                // if the token is expired there's no reason to keep trying
-                                this.expiredToken();
-                                return Observable.throw(error);
-                            } else if (error.status === 404) {
-                                // If the bot is gone, we should stop retrying
-                                return Observable.throw(error);
-                            }
-
-                            return Observable.of(error);
-                        })
-                        .delay(timeout)
-                        .take(retries)
-                    )
             )
     }
 

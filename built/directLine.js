@@ -122,8 +122,6 @@ var DirectLine = /** @class */ (function () {
                         _this.token = _this.secret || conversation.token;
                         _this.streamUrl = conversation.streamUrl;
                         _this.referenceGrammarId = conversation.referenceGrammarId;
-                        if (!_this.secret)
-                            _this.refreshTokenLoop();
                         _this.connectionStatus$.next(ConnectionStatus.Online);
                     }, function (error) {
                         _this.connectionStatus$.next(ConnectionStatus.FailedToConnect);
@@ -183,45 +181,6 @@ var DirectLine = /** @class */ (function () {
                 : Observable_1.Observable.of(error); })
                 .delay(timeout)
                 .take(retries);
-        });
-    };
-    DirectLine.prototype.refreshTokenLoop = function () {
-        var _this = this;
-        this.tokenRefreshSubscription = Observable_1.Observable.interval(intervalRefreshToken)
-            .flatMap(function (_) { return _this.refreshToken(); })
-            .subscribe(function (token) {
-            konsole.log("refreshing token", token, "at", new Date());
-            _this.token = token;
-        });
-    };
-    DirectLine.prototype.refreshToken = function () {
-        var _this = this;
-        return this.checkConnection(true)
-            .flatMap(function (_) {
-            return Observable_1.Observable.ajax({
-                method: "POST",
-                url: _this.domain + "/tokens/refresh",
-                timeout: timeout,
-                headers: {
-                    "Authorization": "Bearer " + _this.token
-                }
-            })
-                .map(function (ajaxResponse) { return ajaxResponse.response.token; })
-                .retryWhen(function (error$) { return error$
-                .mergeMap(function (error) {
-                if (error.status === 403) {
-                    // if the token is expired there's no reason to keep trying
-                    _this.expiredToken();
-                    return Observable_1.Observable.throw(error);
-                }
-                else if (error.status === 404) {
-                    // If the bot is gone, we should stop retrying
-                    return Observable_1.Observable.throw(error);
-                }
-                return Observable_1.Observable.of(error);
-            })
-                .delay(timeout)
-                .take(retries); });
         });
     };
     DirectLine.prototype.reconnect = function (conversation) {
