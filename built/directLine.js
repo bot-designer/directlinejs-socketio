@@ -1,26 +1,41 @@
 "use strict";
 // In order to keep file size down, only import the parts of rxjs that we use
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
     return t;
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DirectLine = exports.ConnectionStatus = void 0;
 var BehaviorSubject_1 = require("rxjs/BehaviorSubject");
 var Observable_1 = require("rxjs/Observable");
-var io = require("socket.io-client");
+var socket_io_client_1 = require("socket.io-client");
 require("rxjs/add/operator/catch");
 require("rxjs/add/operator/combineLatest");
 require("rxjs/add/operator/count");
@@ -62,7 +77,7 @@ var konsole = {
             optionalParams[_i - 1] = arguments[_i];
         }
         if (typeof window !== 'undefined' && window["botchatDebug"] && message)
-            console.log.apply(console, [message].concat(optionalParams));
+            console.log.apply(console, __spreadArray([message], optionalParams, false));
     }
 };
 var DirectLine = /** @class */ (function () {
@@ -155,8 +170,8 @@ var DirectLine = /** @class */ (function () {
     DirectLine.prototype.startConversation = function () {
         //if conversationid is set here, it means we need to call the reconnect api, else it is a new conversation
         var url = this.conversationId
-            ? this.domain + "/conversations/" + this.conversationId + "?watermark=" + this.watermark
-            : this.domain + "/conversations";
+            ? "".concat(this.domain, "/conversations/").concat(this.conversationId, "?watermark=").concat(this.watermark)
+            : "".concat(this.domain, "/conversations");
         var method = this.conversationId ? "GET" : "POST";
         var request$ = {
             method: method,
@@ -165,7 +180,7 @@ var DirectLine = /** @class */ (function () {
             headers: {
                 "Accept": "application/json",
                 'Content-Type': 'application/json',
-                "Authorization": "Bearer " + this.token
+                "Authorization": "Bearer ".concat(this.token)
             }
         };
         if (method == 'POST' && this.params) {
@@ -203,12 +218,12 @@ var DirectLine = /** @class */ (function () {
             .flatMap(function (_) {
             return Observable_1.Observable.ajax({
                 method: "GET",
-                url: _this.domain + "/session/getsessionid",
+                url: "".concat(_this.domain, "/session/getsessionid"),
                 withCredentials: true,
                 timeout: timeout,
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + _this.token
+                    "Authorization": "Bearer ".concat(_this.token)
                 }
             })
                 .map(function (ajaxResponse) {
@@ -239,12 +254,12 @@ var DirectLine = /** @class */ (function () {
             .flatMap(function (_) {
             return Observable_1.Observable.ajax({
                 method: "POST",
-                url: _this.domain + "/conversations/" + _this.conversationId + "/activities",
+                url: "".concat(_this.domain, "/conversations/").concat(_this.conversationId, "/activities"),
                 body: activity,
                 timeout: timeout,
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + _this.token
+                    "Authorization": "Bearer ".concat(_this.token)
                 }
             })
                 .map(function (ajaxResponse) { return ajaxResponse.response.id; })
@@ -280,11 +295,11 @@ var DirectLine = /** @class */ (function () {
             .flatMap(function (_) {
             return Observable_1.Observable.ajax({
                 method: "POST",
-                url: _this.domain + "/conversations/" + _this.conversationId + "/upload?userId=" + messageWithoutAttachments.from.id,
+                url: "".concat(_this.domain, "/conversations/").concat(_this.conversationId, "/upload?userId=").concat(messageWithoutAttachments.from.id),
                 body: formData,
                 timeout: timeout,
                 headers: {
-                    "Authorization": "Bearer " + _this.token
+                    "Authorization": "Bearer ".concat(_this.token)
                 }
             })
                 .map(function (ajaxResponse) { return ajaxResponse.response.id; })
@@ -318,10 +333,10 @@ var DirectLine = /** @class */ (function () {
                     Observable_1.Observable.ajax({
                         headers: {
                             Accept: 'application/json',
-                            Authorization: "Bearer " + _this.token
+                            Authorization: "Bearer ".concat(_this.token)
                         },
                         method: 'GET',
-                        url: _this.domain + "/conversations/" + _this.conversationId + "/activities?watermark=" + _this.watermark,
+                        url: "".concat(_this.domain, "/conversations/").concat(_this.conversationId, "/activities?watermark=").concat(_this.watermark),
                         timeout: timeout
                     }).subscribe(function (result) {
                         subscriber.next(result);
@@ -374,7 +389,7 @@ var DirectLine = /** @class */ (function () {
         var _this = this;
         return Observable_1.Observable.create(function (subscriber) {
             konsole.log("creating WebSocket", _this.streamUrl);
-            _this.socketConnection = io(_this.streamUrl);
+            _this.socketConnection = (0, socket_io_client_1.io)(_this.streamUrl);
             _this.socketConnection.on('close', function (close) {
                 konsole.log("Socket close", close);
                 subscriber.error(close);
@@ -398,11 +413,11 @@ var DirectLine = /** @class */ (function () {
             .flatMap(function (_) {
             return Observable_1.Observable.ajax({
                 method: "GET",
-                url: _this.domain + "/conversations/" + _this.conversationId + "?watermark=" + _this.watermark,
+                url: "".concat(_this.domain, "/conversations/").concat(_this.conversationId, "?watermark=").concat(_this.watermark),
                 timeout: timeout,
                 headers: {
                     "Accept": "application/json",
-                    "Authorization": "Bearer " + _this.token
+                    "Authorization": "Bearer ".concat(_this.token)
                 }
             })
                 .do(function (result) {

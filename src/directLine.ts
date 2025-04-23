@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
 import { Subscription } from 'rxjs/Subscription';
-import io = require('socket.io-client');
+import { io, Socket } from 'socket.io-client';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/combineLatest';
@@ -300,7 +300,7 @@ export class DirectLine implements IBotConnection {
     public connectionStatus$ = new BehaviorSubject(ConnectionStatus.Uninitialized);
     public activity$: Observable<Activity>;
     private params: any;
-    private socketConnection: SocketIOClient.Socket;
+    private socketConnection: Socket;
 
     private domain = "https://directline.botframework.com/v3/directline";
     private webSocket: boolean;

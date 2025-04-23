@@ -232,7 +232,7 @@ export declare enum ConnectionStatus {
     Online = 2,
     ExpiredToken = 3,
     FailedToConnect = 4,
-    Ended = 5,
+    Ended = 5
 }
 export interface DirectLineOptions {
     secret?: string;
@@ -270,20 +270,20 @@ export declare class DirectLine implements IBotConnection {
     private pollingInterval;
     private tokenRefreshSubscription;
     constructor(options: DirectLineOptions);
-    private checkConnection(once?);
-    private expiredToken();
-    private startConversation();
+    private checkConnection;
+    private expiredToken;
+    private startConversation;
     reconnect(conversation: Conversation): void;
     end(): void;
     getSessionId(): Observable<string>;
     postActivity(activity: Activity): Observable<any>;
-    private postMessageWithAttachments({attachments, ...messageWithoutAttachments});
-    private catchPostError(error);
-    private catchExpiredToken(error);
-    private pollingGetActivity$();
-    private observableFromActivityGroup(activityGroup);
-    private webSocketActivity$();
-    private observableWebSocket<T>();
+    private postMessageWithAttachments;
+    private catchPostError;
+    private catchExpiredToken;
+    private pollingGetActivity$;
+    private observableFromActivityGroup;
+    private webSocketActivity$;
+    private observableWebSocket;
     closeSocketConnection(): void;
-    private reconnectToConversation();
+    private reconnectToConversation;
 }
